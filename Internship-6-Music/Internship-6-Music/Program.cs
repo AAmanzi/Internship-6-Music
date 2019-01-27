@@ -38,7 +38,7 @@ namespace Internship_6_Music
 
                 Console.WriteLine();
                 Console.WriteLine("Input nationality that you want to search by:");
-                var nationalityForSearch = Console.ReadLine(); //TODO normalize strings
+                var nationalityForSearch = Console.ReadLine();
                 var artistsWithNationality = allArtists.Where(artist => artist.Nationality == nationalityForSearch).OrderBy(artist => artist.Name);
                 foreach (var artist in artistsWithNationality)
                 {
