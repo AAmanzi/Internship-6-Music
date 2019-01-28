@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using Dapper;
 using Internship_6_Music.Models;
 
@@ -21,8 +17,7 @@ namespace Internship_6_Music
 
         public static void LoadDataBase()
         {
-            var connectionString = 
-                "Data Source = (LocalDb)\\MSSQLLocalDB; Initial Catalog = Internship-6-Music; Integrated Security = true; MultipleActiveResultSets = true";
+            const string connectionString = "Data Source = (LocalDb)\\MSSQLLocalDB; Initial Catalog = Internship-6-Music; Integrated Security = true; MultipleActiveResultSets = true";
             using (var connection = new SqlConnection(connectionString))
             {
                 var allArtists = connection.Query<Artist>("SELECT * FROM Artists").ToList();
@@ -37,14 +32,16 @@ namespace Internship_6_Music
                 }
 
                 Console.WriteLine();
-                Console.WriteLine("Input nationality that you want to search by:");
+                Console.WriteLine("Input nationality that you want to search artists by:");
                 var nationalityForSearch = Console.ReadLine();
                 var artistsWithNationality = allArtists.Where(artist => artist.Nationality == nationalityForSearch).OrderBy(artist => artist.Name);
                 foreach (var artist in artistsWithNationality)
                 {
                     Console.WriteLine($"{artist.Name}, {artist.Nationality}");
                 }
-                
+                Console.WriteLine();
+
+                Console.WriteLine("All albums with their proprietary artist:");
                 Console.WriteLine();
                 var albumArtistList =
                     from artist in allArtists
@@ -59,18 +56,21 @@ namespace Internship_6_Music
                     Console.WriteLine($"Artist: {albumArtistItem.Artist.Name}");
                     Console.WriteLine();
                 }
+                Console.WriteLine();
                 
-                Console.WriteLine("Search albums: ");
+                Console.WriteLine("Input part(s) of the album name that you want to search:");
                 
                 var searchParameter = Console.ReadLine() ?? "";
-                var parameter = searchParameter;
-                var albumsByParameter = allAlbums.Where(album => album.Name.Contains(parameter));
+                var albumsByParameter = allAlbums.Where(album => album.Name.Contains(searchParameter)); //?
                 foreach (var album in albumsByParameter)
                 {
                     Console.WriteLine($"{album.Name}, {album.ReleaseYear}");
                 }
                 Console.WriteLine();
-                
+
+                Console.WriteLine();
+                Console.WriteLine("Albums with their full duration:");
+                Console.WriteLine();
                 var songAlbumList =
                     from album in allAlbums
                     join songOnAlbum in allSongsOnAlbums on album.AlbumId equals songOnAlbum.AlbumId
@@ -89,10 +89,10 @@ namespace Internship_6_Music
                 }
                 
                 Console.WriteLine();
-                Console.WriteLine("Search albums that contain song:");
+                Console.WriteLine("Input song name that you want to be found on albums:");
                 searchParameter = Console.ReadLine() ?? "";
                 var matchParameterList =
-                    songAlbumList.Where(songAlbumItem => songAlbumItem.Song.Name == searchParameter);
+                    songAlbumList.Where(songAlbumItem => songAlbumItem.Song.Name == searchParameter); //?
                 foreach (var matchItem in matchParameterList)
                 {
                     Console.WriteLine($"{matchItem.Album.Name}, {matchItem.Album.ReleaseYear}");
@@ -103,7 +103,7 @@ namespace Internship_6_Music
                     from songAlbumItem in songAlbumList
                     join artist in allArtists on songAlbumItem.Album.ArtistId equals artist.ArtistId
                     select new {SongAlbumItem = songAlbumItem, Artist = artist};
-                Console.WriteLine("Search songs by artist:");
+                Console.WriteLine("Input artist name that you want to search songs by:");
                 var artistParameter = Console.ReadLine() ?? "";
                 searchParameter = "";
                 var yearParameter = 0;

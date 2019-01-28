@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Internship_6_Music.Models
+﻿namespace Internship_6_Music.Models
 {
     public class SongOnAlbum
     {
