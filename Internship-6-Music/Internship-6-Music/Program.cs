@@ -46,14 +46,30 @@ namespace Internship_6_Music
                 var albumArtistList =
                     from artist in allArtists
                     join album in allAlbums on artist.ArtistId equals album.ArtistId
-                    select new {Artist = artist, Album = album};
+                    select new
+                    {
+                        ArtistName = artist.Name,
+                        artist.ArtistId,
+                        artist.Nationality,
+                        album.AlbumId,
+                        AlbumName = album.Name,
+                        album.ReleaseYear
+                    };
                     
-                albumArtistList = albumArtistList.OrderBy(album => album.Album.ReleaseYear);
+                var albumArtistsByYear = 
+                    from albumArtist in albumArtistList 
+                    orderby albumArtist.ReleaseYear group albumArtist by albumArtist.ReleaseYear;
 
-                foreach (var albumArtistItem in albumArtistList)
+                foreach (var albumArtistItem in albumArtistsByYear)
                 {
-                    Console.WriteLine($"Album: {albumArtistItem.Album.Name}, {albumArtistItem.Album.ReleaseYear}");
-                    Console.WriteLine($"Artist: {albumArtistItem.Artist.Name}");
+                    Console.WriteLine($"Albums released in: {albumArtistItem.Key}");
+
+                    foreach (var album in albumArtistItem)
+                    {
+                        Console.WriteLine($"{album.AlbumName}");
+                        Console.WriteLine($"Artist: {album.ArtistName}");
+                        Console.WriteLine();
+                    }
                     Console.WriteLine();
                 }
                 Console.WriteLine();
@@ -106,7 +122,7 @@ namespace Internship_6_Music
                 Console.WriteLine("Input artist name that you want to search songs by:");
                 var artistParameter = Console.ReadLine() ?? "";
                 searchParameter = "";
-                var yearParameter = 0;
+                int yearParameter;
                 do
                 {
                     Console.WriteLine("Released after:");
