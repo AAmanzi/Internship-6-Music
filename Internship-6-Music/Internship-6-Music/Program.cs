@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
@@ -84,6 +85,63 @@ namespace Internship_6_Music
                         Console.WriteLine($"Artist: {album.Artist.Name}");
                         Console.WriteLine();
                     }
+                }
+
+                //Svi albumi koji sadrže u imenu zadani tekst
+                Console.WriteLine("Input part of the album name you want to search albums by:");
+                searchParameter = Console.ReadLine() ?? "";
+                var albumsByParameter = allAlbums.Where(album => album.Name.Contains(searchParameter));
+                foreach (var album in albumsByParameter)
+                {
+                    Console.WriteLine($"{album.Name} {album.ReleaseYear}");
+                }
+                Console.WriteLine();
+
+                //Svi albumi skupa sa ukupnim trajanjem - ukupno trajanje je zbroj trajanja svih pjesama na albumu
+                Console.WriteLine("ALBUMS WITH TOTAL DURATION");
+                foreach (var album in allAlbums)
+                {
+                    var duration = new TimeSpan(00,00,00);
+                    duration = album.SongsAlbums.Aggregate(duration, (current, songOnAlbum) => current + songOnAlbum.Song.Duration);
+
+                    Console.WriteLine($"{album.Name} {duration}");
+                }
+                Console.WriteLine();
+                //Svi albumi na kojima se pojavljuje zadana pjesma
+                Console.WriteLine("What albums have the song you input:");
+                searchParameter = Console.ReadLine() ?? "";
+                var songByParameter = allSongs.FirstOrDefault(song => song.Name == searchParameter);
+                var albumsBySong = allAlbums.Where(album =>
+                    songByParameter != null && album.SongsAlbums.Contains
+                        (allSongsOnAlbums.FirstOrDefault(songAlbum => songAlbum.Album == album && songAlbum.Song == songByParameter)));
+
+                foreach (var album in albumsBySong)
+                {
+                    Console.WriteLine($"{album.Name} {album.ReleaseYear}");
+                }
+
+                //Sve pjesme zadanog glazbenika, koje su na albumima izdanim iza određene godine
+                Console.WriteLine("Input artist name you want to get songs by:");
+                searchParameter = Console.ReadLine() ?? "";
+                var songsByArtist = allSongs.Where(song => song.SongsAlbums.Contains
+                (allSongsOnAlbums.FirstOrDefault(songAlbum => songAlbum.Song == song &&
+                                                              songAlbum.Album.Artist.Name == searchParameter)));
+
+                searchParameter = "";
+                int yearParameter;
+                do
+                {
+                    Console.WriteLine("Released after:");
+                    searchParameter = Console.ReadLine();
+                } while (!int.TryParse(searchParameter, out yearParameter));
+
+                var songsAfterYear = songsByArtist.Where(song => song.SongsAlbums.Contains(
+                    allSongsOnAlbums.FirstOrDefault(songAlbum => songAlbum.Song == song &&
+                                                                 int.Parse(songAlbum.Album.ReleaseYear) > yearParameter)));
+
+                foreach (var song in songsAfterYear)
+                {
+                    Console.WriteLine(song.Name);
                 }
             }
         }
