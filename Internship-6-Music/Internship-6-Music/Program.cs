@@ -69,6 +69,22 @@ namespace Internship_6_Music
                     Console.WriteLine($"Nationality: {artist.Nationality}");
                     Console.WriteLine();
                 }
+                Console.WriteLine();
+
+                //Svi albumi grupirani po godini izdavanja, kraj imena albuma piše tko je autor (glazbenik)
+                Console.WriteLine("ALBUMS GROUPED BY YEAR");
+                var groupedAlbums = allAlbums.OrderBy(album => album.ReleaseYear).GroupBy(album => album.ReleaseYear);
+                foreach (var albumItem in groupedAlbums)
+                {
+                    Console.WriteLine($"Year: {albumItem.Key}");
+                    Console.WriteLine();
+                    foreach (var album in albumItem)
+                    {
+                        Console.WriteLine($"Album: {album.Name}");
+                        Console.WriteLine($"Artist: {album.Artist.Name}");
+                        Console.WriteLine();
+                    }
+                }
             }
         }
     }
