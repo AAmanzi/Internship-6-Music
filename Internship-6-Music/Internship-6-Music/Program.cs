@@ -49,7 +49,7 @@ namespace Internship_6_Music
                 }
 
                 //Svi glazbenici poredani po imenu (u insert SQL-u možete prvo navesti prezimena da bude lakše)
-
+                
                 var orderedArtists = allArtists.OrderBy(artist => artist.Name);
                 Console.WriteLine("ARTISTS ORDERED BY NAME");
                 Console.WriteLine();
@@ -119,13 +119,14 @@ namespace Internship_6_Music
                 {
                     Console.WriteLine($"{album.Name} {album.ReleaseYear}");
                 }
+                
 
                 //Sve pjesme zadanog glazbenika, koje su na albumima izdanim iza određene godine
                 Console.WriteLine("Input artist name you want to get songs by:");
                 searchParameter = Console.ReadLine() ?? "";
                 var songsByArtist = allSongs.Where(song => song.SongsAlbums.Contains
                 (allSongsOnAlbums.FirstOrDefault(songAlbum => songAlbum.Song == song &&
-                                                              songAlbum.Album.Artist.Name == searchParameter)));
+                                                              songAlbum.Album.Artist.Name == searchParameter))).ToList();
 
                 searchParameter = "";
                 int yearParameter;
@@ -137,7 +138,7 @@ namespace Internship_6_Music
 
                 var songsAfterYear = songsByArtist.Where(song => song.SongsAlbums.Contains(
                     allSongsOnAlbums.FirstOrDefault(songAlbum => songAlbum.Song == song &&
-                                                                 int.Parse(songAlbum.Album.ReleaseYear) > yearParameter)));
+                                                                 int.Parse(songAlbum.Album.ReleaseYear) > yearParameter))).ToList();
 
                 foreach (var song in songsAfterYear)
                 {
